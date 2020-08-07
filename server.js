@@ -24,6 +24,8 @@ passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((user, done) => done(null, user));
 
 let _setting = require('./setup/setting.json');
+const _port = process.env.PORT || _setting.server.port;
+console.log(`process.env.PORT: ${process.env.PORT}`);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
@@ -73,7 +75,7 @@ app.get("/", function (req, res) {
     res.sendFile(__dirname + '/static/index.html');
 });
 
-app.listen(_setting.server.port, function() {
-    console.log("server start: http://localhost:" + _setting.server.port);
+app.listen(_port, function() {
+    console.log("server start: http://localhost:" + _port);
 });
 
