@@ -24,9 +24,13 @@ passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((user, done) => done(null, user));
 
 let _setting = require('./setup/setting.json');
-let _user = require('./');
+let _user = require('./modules/user').User;
 const _port = process.env.PORT || _setting.server.port;
-console.log(`process.env.PORT: ${process.env.PORT}`);
+
+console.log(new _user("Sasha", "qwerty123", {
+    money: 1800,
+    isGuest: true,
+}));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
