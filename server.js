@@ -24,6 +24,7 @@ passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((user, done) => done(null, user));
 
 let _setting = require('./setup/setting.json');
+let _user = require('./');
 const _port = process.env.PORT || _setting.server.port;
 console.log(`process.env.PORT: ${process.env.PORT}`);
 
