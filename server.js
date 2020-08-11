@@ -24,7 +24,7 @@ passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((user, done) => done(null, user));
 
 let _setting = require('./setup/setting.json');
-let _user = require('./modules/user').User;
+let _user = require('./game/user').User;
 const _port = process.env.PORT || _setting.server.port;
 
 app.use(bodyParser.json());
@@ -60,7 +60,7 @@ app.post("/db", (req, res) => {
 
         const db = client.db("local");
         const collection = db.collection("user");
-        let user = {username: req.body.username, password: req.body.password, DataUser: new _user(req.body.username, {})};
+        let user = {username: req.body.username, password: req.body.password, DataUser: new _user(req.body.username, {isGuest: true, money: 1500})};
         collection.insertOne(user, function(err, result){
             if(err){ 
                 return console.log(err);
