@@ -38,7 +38,7 @@ app.use(express.static("static"));
 passport.use(new localStrategy((user, password, done) => {
     if(user !== 'test_user')
         return done(null, false, {message: 'User not found'});
-    else if(password !== 'test_password')
+    else if(password !== '16ec1ebb01fe02ded9b7d5447d3dfc65')
     return done(null, false, {message: 'Wrong password'});
 
     return done(null, {id: 1, name: 'Test', age: 21});
