@@ -24,14 +24,8 @@ passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((user, done) => done(null, user));
 
 let _setting = require('./setup/setting.json');
-const { User } = require('./modules/user');
 let _user = require('./modules/user').User;
 const _port = process.env.PORT || _setting.server.port;
-
-console.table(new _user("Sasha", "qwerty123", {
-    money: 1800,
-    isGuest: true,
-}));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
@@ -60,6 +54,7 @@ app.post("/login", function(req, res) {
 
 app.post("/db", (req, res) => {
     console.log(req.body);
+    dbClient = new mongoClient("mongodb://localhost:27017/", { useNewUrlParser: true });
     dbClient.connect((err, client) => {
         if (err) return console.error(err);
 
@@ -72,9 +67,9 @@ app.post("/db", (req, res) => {
             }
             console.log(result.ops);
             client.close();
+            res.json({message: 'User added', status: true, user: result.ops});
         });
     });
-    res.json({status: true});
 });
 
 app.get("/", function (req, res) {
