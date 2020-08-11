@@ -1,4 +1,4 @@
 /node_modules
 /package-lock.json
 /index.js
-/page2.html
+static/page2.html

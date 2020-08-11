@@ -52,7 +52,10 @@ app.post("/login", function(req, res) {
     res.redirect("/checkin", 401);
 });
 
-app.post("/checkin")
+app.post("/checkin", passport.authenticate('local', {session: false, successRedirect: '/page', failureRedirect: '/', failureFlash: 'Invalid username or password.', successFlash: 'Welcome!'}), (req, res, next) => {
+    console.log("Hi");
+    res.json({message: true});
+});
 
 app.post("/db", (req, res) => {
     console.log(req.body);
@@ -75,8 +78,11 @@ app.post("/db", (req, res) => {
 });
 
 app.get("/", function (req, res) {
-    console.log(passport.authenticate);
     res.sendFile(__dirname + '/static/index.html');
+});
+
+app.get("/page", function (req, res) {
+    res.sendFile(__dirname + '/static/page2.html');
 });
 
 app.listen(_port, function() {
