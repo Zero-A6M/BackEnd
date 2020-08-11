@@ -49,8 +49,10 @@ app.post("/logout", function(req, res) {
 });
 
 app.post("/login", function(req, res) {
-
+    res.redirect("/checkin", 401);
 });
+
+app.post("/checkin")
 
 app.post("/db", (req, res) => {
     console.log(req.body);
@@ -73,6 +75,7 @@ app.post("/db", (req, res) => {
 });
 
 app.get("/", function (req, res) {
+    console.log(passport.authenticate);
     res.sendFile(__dirname + '/static/index.html');
 });
 
