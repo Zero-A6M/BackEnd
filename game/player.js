@@ -7,3 +7,4 @@ class Player {
         this.isDefence = false;
     }
 }
+
