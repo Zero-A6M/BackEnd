@@ -48,13 +48,28 @@ app.post("/logout", function(req, res) {
     res.redirect('/');
 });
 
-app.post("/login", function(req, res) {
-    res.redirect("/checkin", 401);
+app.post("/login", passport.authenticate('local', {session: false, successRedirect: '/page', failureRedirect: '/', failureFlash: 'Invalid username or password.', successFlash: 'Welcome!'}), function(req, res) {
+
 });
 
-app.post("/checkin", passport.authenticate('local', {session: false, successRedirect: '/page', failureRedirect: '/', failureFlash: 'Invalid username or password.', successFlash: 'Welcome!'}), (req, res, next) => {
-    console.log("Hi");
-    res.json({message: true});
+app.post("/checkin", (req, res) => {
+    console.log(req.body);
+    dbClient = new mongoClient("mongodb://localhost:27017/", { useNewUrlParser: true });
+    dbClient.connect((err, client) => {
+        if (err) return console.error(err);
+
+        const db = client.db("local");
+        const collection = db.collection("db_users");
+        let user = {username: req.body.username, password: req.body.password, DataUser: new _user(req.body.username, {isGuest: true, money: 1500})};
+        collection.insertOne(user, function(err, result){
+            if(err){ 
+                return console.log(err);
+            }
+            console.log(result.ops);
+            client.close();
+            res.json({message: 'User added', status: true, user: result.ops});
+        });
+    });
 });
 
 app.post("/db", (req, res) => {
@@ -64,7 +79,7 @@ app.post("/db", (req, res) => {
         if (err) return console.error(err);
 
         const db = client.db("local");
-        const collection = db.collection("user");
+        const collection = db.collection("db_users");
         let user = {username: req.body.username, password: req.body.password, DataUser: new _user(req.body.username, {isGuest: true, money: 1500})};
         collection.insertOne(user, function(err, result){
             if(err){ 
