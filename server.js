@@ -35,8 +35,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static("static"));
 
-console.log(new _user("Alex"));
-
 passport.use(new localStrategy(async(user, password, done) => {
     let dbClient = new mongoClient("mongodb://localhost:27017/", { useNewUrlParser: true, useUnifiedTopology: true });
     let myPromise = () => {
