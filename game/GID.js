@@ -1,3 +1,37 @@
+Array.copy = function(array) {
+    let _ = [];
+    for (let i of array)
+        _.push(i);
+    return _;
+}
+
+Array.rotate = function(array, pos, side = true, isClockwise = true) {
+    if (pos > array.length) throw new Error("Длинна сдвига не может превышать длинну массива.");
+    
+    let _ = Array.copy(array);
+    
+    if (side) {
+        if (isClockwise) {
+            for (let i = 0; i < array.length; i++)
+                array[(i + pos) % array.length] = _[i];
+        } else {
+            for (let i = 0; i < array.length; i++)
+                array[(array.length - i + pos) % array.length] = _[i];
+        }
+    } else {
+        if (isClockwise) {
+            for (let i = 0; i < array.length; i++)
+                array[(array.length - pos + i) % array.length] = _[i];
+        } else {
+            for (let i = 0; i < array.length; i++) {
+                array[(array.length - pos - i + array.length) % array.length] = _[i];
+            }
+        }
+    }
+    
+    return array;
+}
+
 /*
 class GID {
     constructor() {}
@@ -108,6 +142,8 @@ class GID {
 
 */
 
+const random = require('./random').Random;
+
 class GID {
     constructor() {}
 
@@ -166,7 +202,7 @@ class GID {
     }
 
     static Mixer(str) {
-        let {bytes1, bytes2} = this.GetBytes(str);
+        var {bytes1, bytes2} = this.GetBytes(str);
         let bytes = [];
         
         for (let i = 0; bytes1.length !== 16; i++) {
@@ -177,15 +213,7 @@ class GID {
             bytes2.push(bytes1[bytes1.length - i - 1] ^ bytes2[i] ^ this.GetHex());
         }
         
-        bytes1 = bytes1.concat(this.Mix1(bytes1.splice(0, 8)));
-        bytes1 = bytes1.concat(this.Mix4(bytes2.splice(0, 8)));
-        bytes2 = bytes2.concat(this.Mix2(bytes1.splice(0, 8)));
-        bytes2 = bytes2.concat(this.Mix3(bytes2.splice(0, 8)));
-        
-        bytes1 = bytes1.concat(this.Mix4(bytes2.splice(0, 8)));
-        bytes2 = bytes2.concat(this.Mix1(bytes1.splice(0, 8)));
-        bytes1 = bytes1.concat(this.Mix2(bytes1.splice(0, 8)));
-        bytes2 = bytes2.concat(this.Mix3(bytes2.splice(0, 8)));
+        var {bytes1, bytes2} = this.MixArray({bytes1, bytes2});
         
         bytes.push(bytes1[0] ^ bytes2[3] ^ this.GetHex());
         bytes.push(bytes1[3] ^ bytes2[12] ^ this.GetHex());
@@ -210,12 +238,34 @@ class GID {
         return bytes;
     }
 
+    static MixArray(obj) {
+        let {bytes1, bytes2} = obj;
+        
+        bytes1 = bytes1.concat(this.Mix1(bytes1.splice(0, 8)));
+        bytes1 = bytes1.concat(this.Mix4(bytes2.splice(0, 8)));
+        bytes2 = bytes2.concat(this.Mix2(bytes1.splice(0, 8)));
+        bytes2 = bytes2.concat(this.Mix3(bytes2.splice(0, 8)));
+        
+        bytes1 = bytes1.concat(this.Mix4(bytes2.splice(0, 8)));
+        bytes2 = bytes2.concat(this.Mix1(bytes1.splice(0, 8)));
+        bytes1 = bytes1.concat(this.Mix2(bytes1.splice(0, 8)));
+        bytes2 = bytes2.concat(this.Mix3(bytes2.splice(0, 8)));
+        
+        return {bytes1, bytes2};
+    }
+
     static Mix1(bytes) {
         let _ = [];
         new Random(bytes[0] ^ bytes[7] << 8 ^ this.GetHex()).NextBytes(_, 8);
         
+        let pos = (bytes[0] ^ bytes[7] ^ bytes[4] ^ bytes[6]) % 5;
+        let side = ((bytes[1] ^ bytes[3]) % 2) ? true: false;
+        let isClockwise = ((bytes[2] ^ bytes[5]) % 2) ? true: false;
+        
+        bytes = Array.rotate(bytes, pos, side, isClockwise);
+        
         for (let i = 0; i < 8; i++) {
-            bytes[i] ^= (bytes[i] ^ _[7 - i] << 1);
+            bytes[i] = (bytes[i] ^ _[7 - i] << 1);
             bytes[i] &= 0xFF;
         }
         
@@ -227,8 +277,14 @@ class GID {
         
         new Random(bytes[0] ^ bytes[7] << 4 ^ this.GetHex()).NextBytes(_, 8);
         
+        let pos = (bytes[0] ^ bytes[2] ^ bytes[4] ^ bytes[3]) % 5;
+        let side = ((bytes[1] ^ bytes[6]) % 2) ? true: false;
+        let isClockwise = ((bytes[7] ^ bytes[5]) % 2) ? true: false;
+        
+        bytes = Array.rotate(bytes, pos, side, isClockwise);
+        
         for (let i = 0; i < 8; i++) {
-            bytes[i] ^= (bytes[i] ^ _[7 - i] ^ this.GetHex());
+            bytes[i] = (bytes[i] ^ _[7 - i] ^ this.GetHex());
         }
         
         return bytes;
@@ -239,8 +295,14 @@ class GID {
         
         new Random(bytes[0] << 16 ^ bytes[7] << 8 ^ this.GetHex()).NextBytes(_, 8);
         
+        let pos = (bytes[3] ^ bytes[5] ^ bytes[4] ^ bytes[6]) % 5;
+        let side = ((bytes[2] ^ bytes[0]) % 2) ? true: false;
+        let isClockwise = ((bytes[1] ^ bytes[7]) % 2) ? true: false;
+        
+        bytes = Array.rotate(bytes, pos, side, isClockwise);
+        
         for (let i = 0; i < 8; i++) {
-            bytes[i] ^= (bytes[i] ^ _[i]);
+            bytes[i] = (bytes[i] ^ _[i]);
             bytes[i] ^= _[7 - i] << 1;
             bytes[i] &= 0xFF
         }
@@ -253,8 +315,14 @@ class GID {
         
         new Random(bytes[0] ^ bytes[7] ^ this.GetHex()).NextBytes(_, 8);
         
+        let pos = (bytes[0] ^ bytes[7] ^ bytes[5] ^ bytes[1]) % 5;
+        let side = ((bytes[6] ^ bytes[3]) % 2) ? true: false;
+        let isClockwise = ((bytes[2] ^ bytes[4]) % 2) ? true: false;
+        
+        bytes = Array.rotate(bytes, pos, side, isClockwise);
+        
         for (let i = 0; i < 8; i++) {
-            bytes[i] ^= (bytes[i] ^ _[7 - i] << 2);
+            bytes[i] = (bytes[7 - i] ^ _[i] << 2);
             bytes[i] &= 0xFF;
         }
         
@@ -271,7 +339,7 @@ class GID {
             result += alphabet[bytes[i] >> 3];
             result += alphabet[bytes[i] & 0x1F];
         }
-
+        
         return result;
     }
 }

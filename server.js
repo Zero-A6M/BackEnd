@@ -86,7 +86,12 @@ app.post("/logout", function(req, res) {
 
 app.post("/login", passport.authenticate('local', {session: true, failureFlash: 'Invalid username or password.', successFlash: 'Welcome!'}), function(req, res) {
     console.log(`User login ${req.user.username}`);
-    res.json(req.user);
+    let _res = {
+        user: req.user,
+        page: "SecondPage",
+        access: true,
+    }
+    res.json(_res);
 });
 
 app.post("/checkin", (req, res) => {
