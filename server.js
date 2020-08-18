@@ -94,6 +94,8 @@ app.post("/login", passport.authenticate('local', {session: true, failureFlash: 
     res.json(_res);
 });
 
+console.log(new _user("Alex").GID);
+
 app.post("/checkin", (req, res) => {
     console.log(req.body);
     let dbClient = new mongoClient("mongodb://localhost:27017/", { useNewUrlParser: true, useUnifiedTopology: true });

@@ -28,7 +28,7 @@ Array.rotate = function(array, pos, side = true, isClockwise = true) {
             }
         }
     }
-    
+
     return array;
 }
 
@@ -256,7 +256,7 @@ class GID {
 
     static Mix1(bytes) {
         let _ = [];
-        new Random(bytes[0] ^ bytes[7] << 8 ^ this.GetHex()).NextBytes(_, 8);
+        new random(bytes[0] ^ bytes[7] << 8 ^ this.GetHex()).NextBytes(_, 8);
         
         let pos = (bytes[0] ^ bytes[7] ^ bytes[4] ^ bytes[6]) % 5;
         let side = ((bytes[1] ^ bytes[3]) % 2) ? true: false;
@@ -275,7 +275,7 @@ class GID {
     static Mix2(bytes) {
         let _ = [];
         
-        new Random(bytes[0] ^ bytes[7] << 4 ^ this.GetHex()).NextBytes(_, 8);
+        new random(bytes[0] ^ bytes[7] << 4 ^ this.GetHex()).NextBytes(_, 8);
         
         let pos = (bytes[0] ^ bytes[2] ^ bytes[4] ^ bytes[3]) % 5;
         let side = ((bytes[1] ^ bytes[6]) % 2) ? true: false;
@@ -293,7 +293,7 @@ class GID {
     static Mix3(bytes) {
         let _ = [];
         
-        new Random(bytes[0] << 16 ^ bytes[7] << 8 ^ this.GetHex()).NextBytes(_, 8);
+        new random(bytes[0] << 16 ^ bytes[7] << 8 ^ this.GetHex()).NextBytes(_, 8);
         
         let pos = (bytes[3] ^ bytes[5] ^ bytes[4] ^ bytes[6]) % 5;
         let side = ((bytes[2] ^ bytes[0]) % 2) ? true: false;
@@ -313,7 +313,7 @@ class GID {
     static Mix4(bytes) {
         let _ = [];
         
-        new Random(bytes[0] ^ bytes[7] ^ this.GetHex()).NextBytes(_, 8);
+        new random(bytes[0] ^ bytes[7] ^ this.GetHex()).NextBytes(_, 8);
         
         let pos = (bytes[0] ^ bytes[7] ^ bytes[5] ^ bytes[1]) % 5;
         let side = ((bytes[6] ^ bytes[3]) % 2) ? true: false;
