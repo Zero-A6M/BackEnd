@@ -25,8 +25,8 @@ let _setting = require('./setup/setting.json');
 let _user = require('./game/user').User;
 const _port = process.env.PORT || _setting.server.port;
 const _db_url = process.env.MONGODB_URI || _setting.db.url;
-const _db_name = process.env.MONGODB_URI || _setting.db.db_name;
-const _collection_name = process.env.MONGODB_URI || _setting.db.collection_name;
+const _db_name = process.env.db_name || _setting.db.db_name;
+const _collection_name = process.env.collection_name || _setting.db.collection_name;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
