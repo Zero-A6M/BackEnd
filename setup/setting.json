@@ -1,5 +1,11 @@
 {
     "server": {
         "port": 8228
+    },
+
+    "db": {
+        "url": "mongodb://localhost:27017/",
+        "db_name": "local",
+        "collection_name": "db_users"
     }
 }
