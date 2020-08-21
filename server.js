@@ -74,7 +74,7 @@ passport.use(new localStrategy(async(user, password, done) => {
             });
         });
     };
-
+    
     let currentUser = await myPromise().catch((err) => {
         console.error(err.message);
         return null;
