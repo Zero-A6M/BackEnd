@@ -23,10 +23,17 @@ passport.deserializeUser((user, done) => done(null, user));
 
 let _setting = require('./setup/setting.json');
 let _user = require('./game/user').User;
+const dataBase = require('./modules/db_api').DB_Mongo;
 const _port = process.env.PORT || _setting.server.port;
 const _db_url = process.env.MONGODB_URI || _setting.db.url;
 const _db_name = process.env.db_name || _setting.db.db_name;
 const _collection_name = process.env.collection_name || _setting.db.collection_name;
+const _db_api_ = new dataBase({
+    url: _db_url,
+    db_name: _db_name,
+    collection_name: _collection_name
+}, { useNewUrlParser: true, useUnifiedTopology: true });
+
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
@@ -35,6 +42,8 @@ app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static("static"));
+
+
 
 passport.use(new localStrategy(async(user, password, done) => {
     let dbClient = new mongoClient(_db_url, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -94,7 +103,7 @@ app.post("/login", passport.authenticate('local', {session: true, failureFlash: 
     console.log(`User login ${req.user.username}`);
     let _res = {
         user: req.user,
-        page: "SecondPage",
+        page: "MainWindow",
         access: true,
     }
     res.json(_res);
